@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Шар памяти</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #F8DB98;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 48px;
+            padding: 24px 20px 32px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #5C4B3A;
+            margin-bottom: 4px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #5C4B3A;
+            margin-bottom: 16px;
+        }
+
+        .sub {
+            color: #8B7355;
+            font-size: 14px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #E8D5B5;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .menu-btn {
+            background: #FFF8F0;
+            border: 1px solid #E8D5B5;
+            padding: 12px;
+            border-radius: 32px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #5C4B3A;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .menu-btn:active {
+            transform: scale(0.96);
+            background: #F5EDE0;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #5C4B3A;
+            margin-bottom: 6px;
+            margin-left: 8px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            border: 1.5px solid #E8D5B5;
+            border-radius: 32px;
+            background: #ffffff;
+            outline: none;
+            font-family: inherit;
+            resize: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #C4A27A;
+            box-shadow: 0 0 0 3px rgba(196, 162, 122, 0.2);
+        }
+
+        .send-btn {
+            background: #C4A27A;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 14px 20px;
+            border-radius: 40px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.2s;
+        }
+
+        .send-btn:active {
+            transform: scale(0.97);
+            background: #B28C60;
+        }
+
+        .animation-area {
+            display: none;
+            text-align: center;
+            min-height: 380px;
+        }
+
+        .balloon {
+            position: relative;
+            width: 160px;
+            height: 180px;
+            margin: 20px auto;
+            animation: floatUp 4.5s ease-out forwards;
+        }
+
+        .balloon-body {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, #D4B48C);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .balloon-text {
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            font-size: 16px;
+            padding: 12px;
+            word-break: break-word;
+        }
+
+        .string {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: #8B7355;
+            transform: translateX(-50%);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-380px); opacity: 0; }
+        }
+
+        .after-message {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #5C4B3A;
+            background: #FFF8F0;
+            padding: 12px 16px;
+            border-radius: 32px;
+        }
+
+        .reset-btn {
+            background: #FFF8F0;
+            border: 1px solid #E8D5B5;
+            padding: 10px 20px;
+            border-radius: 32px;
+            margin-top: 16px;
+            color: #8B7355;
+            cursor: pointer;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #8B7355;
+            font-size: 14px;
+            padding: 8px 0;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 11px;
+            color: #B8A07E;
+            padding: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8B7355;
+        }
+
+        .success-message {
+            background: #E8F5E8;
+            color: #5C7C5C;
+            padding: 12px;
+            border-radius: 24px;
+            margin-top: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Главное меню -->
+        <div id="mainMenu" class="card section active">
+            <h1>Шар памяти</h1>
+            <div class="sub">лети высоко, друг</div>
+            
+            <div class="menu-grid">
+                <button class="menu-btn" onclick="showSection('balloonForm')">Отправить шар</button>
+                <button class="menu-btn" onclick="showSection('addStoryForm')">Добавить историю</button>
+                <button class="menu-btn" onclick="showSection('addDateForm')">Добавить дату</button>
+                <button class="menu-btn" onclick="startSupport()">Поддержка 40 дней</button>
+            </div>
+            <footer>память остаётся с тобой навсегда</footer>
+        </div>
+
+        <!-- Форма отправки шара -->
+        <div id="balloonForm" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <h1>Отправить шар</h1>
+            <div class="sub">напиши имя и одно слово</div>
+            
+            <div id="balloonInputForm">
+                <div class="input-group">
+                    <label>Имя питомца</label>
+                    <input type="text" id="petName" maxlength="30">
+                </div>
+                <div class="input-group">
+                    <label>Слово или фраза</label>
+                    <input type="text" id="message" maxlength="50">
+                </div>
+                <button class="send-btn" onclick="sendBalloon()">Отпустить шар</button>
+            </div>
+            
+            <div id="balloonAnimation" class="animation-area" style="display:none">
+                <div class="balloon" id="balloon">
+                    <div class="balloon-body" id="balloonBody">
+                        <div class="balloon-text" id="balloonText"></div>
+                    </div>
+                    <div class="string"></div>
+                </div>
+                <div class="after-message" id="afterMessage">Твой шар улетает...</div>
+                <button class="reset-btn" onclick="resetBalloonForm()">Отправить ещё один</button>
+            </div>
+        </div>
+
+        <!-- Форма добавления истории -->
+        <div id="addStoryForm" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <h1>Моя история</h1>
+            <div class="sub">поделись воспоминанием</div>
+            <textarea id="storyText" rows="4" placeholder="Напишите свою историю..."></textarea>
+            <button class="send-btn" onclick="addStory()">Отправить историю</button>
+        </div>
+
+        <!-- Форма добавления даты -->
+        <div id="addDateForm" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <h1>Памятная дата</h1>
+            <div class="sub">сохрани день памяти</div>
+            <div class="input-group">
+                <label>Имя питомца</label>
+                <input type="text" id="memoryPetName" maxlength="30">
+            </div>
+            <div class="input-group">
+                <label>Дата (ГГГГ-ММ-ДД)</label>
+                <input type="text" id="memoryDate" placeholder="2024-03-27">
+            </div>
+            <button class="send-btn" onclick="addMemoryDate()">Сохранить дату</button>
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const colors = ['#E8D5B5', '#D4B48C', '#C4A27A', '#B28C60', '#A57C5C', '#C4D4B5', '#B8C8A8'];
+        
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            tg.enableClosingConfirmation();
+        }
+
+        function sendToBot(action, data) {
+            if (tg) {
+                tg.sendData(JSON.stringify({ action: action, ...data }));
+                tg.close(); // Закрываем WebApp после отправки
+            } else {
+                alert('Функция доступна только в Telegram');
+            }
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function sendBalloon() {
+            const petName = document.getElementById('petName').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!petName || !message) {
+                alert('Напиши имя и одно слово');
+                return;
+            }
+            
+            if (petName.length > 30 || message.length > 50) {
+                alert('Имя и фраза слишком длинные');
+                return;
+            }
+            
+            document.getElementById('balloonInputForm').style.display = 'none';
+            document.getElementById('balloonAnimation').style.display = 'block';
+            
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.getElementById('balloonBody').style.background = `radial-gradient(circle at 30% 30%, #fff, ${randomColor})`;
+            document.getElementById('balloonText').innerHTML = `${escapeHtml(petName)}<br>${escapeHtml(message)}`;
+            
+            sendToBot('send_balloon', { pet_name: petName, message: message });
+            
+            setTimeout(() => {
+                document.getElementById('afterMessage').innerHTML = 'Ты не один. Твоя память осталась здесь';
+            }, 4000);
+        }
+        
+        function resetBalloonForm() {
+            document.getElementById('balloonInputForm').style.display = 'block';
+            document.getElementById('balloonAnimation').style.display = 'none';
+            document.getElementById('petName').value = '';
+            document.getElementById('message').value = '';
+            document.getElementById('afterMessage').innerHTML = 'Твой шар улетает...';
+        }
+        
+        function addStory() {
+            const story = document.getElementById('storyText').value.trim();
+            if (!story) {
+                alert('Напишите историю');
+                return;
+            }
+            sendToBot('add_story', { story: story });
+            document.getElementById('storyText').value = '';
+            alert('История отправлена. Спасибо!');
+            showSection('mainMenu');
+        }
+        
+        function addMemoryDate() {
+            const petName = document.getElementById('memoryPetName').value.trim();
+            const date = document.getElementById('memoryDate').value.trim();
+            
+            if (!petName || !date) {
+                alert('Заполните оба поля');
+                return;
+            }
+            
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                alert('Используйте формат ГГГГ-ММ-ДД, например 2024-03-27');
+                return;
+            }
+            
+            sendToBot('add_memory_date', { pet_name: petName, date: date });
+            document.getElementById('memoryPetName').value = '';
+            document.getElementById('memoryDate').value = '';
+            alert('Дата сохранена. В этот день я пришлю напоминание.');
+            showSection('mainMenu');
+        }
+        
+        function startSupport() {
+            const petName = prompt('Напишите имя питомца, для которого хотите получить поддержку:');
+            if (petName && petName.trim()) {
+                sendToBot('start_support', { pet_name: petName.trim() });
+                alert('Поддержка началась. Каждый день я буду присылать вам тёплые слова.');
+            }
+            showSection('mainMenu');
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        
+        if (tg) {
+            tg.onEvent('backButtonClicked', () => {
+                showSection('mainMenu');
+            });
+        }
+    </script>
+</body>
+</html>
