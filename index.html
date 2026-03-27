@@ -229,20 +229,6 @@
             color: #8B7355;
         }
 
-        .story-item, .balloon-item {
-            background: #FFF8F0;
-            padding: 12px;
-            border-radius: 24px;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .story-date, .balloon-date {
-            font-size: 11px;
-            color: #B8A07E;
-            margin-top: 6px;
-        }
-
         .success-message {
             background: #E8F5E8;
             color: #5C7C5C;
@@ -250,6 +236,20 @@
             border-radius: 24px;
             margin-top: 16px;
             text-align: center;
+        }
+
+        .balloon-item, .story-item {
+            background: #FFF8F0;
+            padding: 12px;
+            border-radius: 24px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .balloon-date, .story-date {
+            font-size: 11px;
+            color: #B8A07E;
+            margin-top: 6px;
         }
     </style>
 </head>
@@ -262,10 +262,12 @@
             
             <div class="menu-grid">
                 <button class="menu-btn" onclick="showSection('balloonForm')">Отправить шар</button>
-                <button class="menu-btn" onclick="loadGallery()">Галерея</button>
-                <button class="menu-btn" onclick="loadStories()">Истории</button>
-                <button class="menu-btn" onclick="loadMemories()">Памятные даты</button>
+                <button class="menu-btn" onclick="showGallery()">Галерея</button>
+                <button class="menu-btn" onclick="showSection('addStoryForm')">Добавить историю</button>
+                <button class="menu-btn" onclick="showSection('storiesContainer')">Истории</button>
                 <button class="menu-btn" onclick="showSection('addDateForm')">Добавить дату</button>
+                <button class="menu-btn" onclick="showSection('memoriesContainer')">Мои даты</button>
+                <button class="menu-btn" onclick="startSupport()">Поддержка 40 дней</button>
             </div>
             <footer>память остаётся с тобой навсегда</footer>
         </div>
@@ -297,8 +299,39 @@
                 </div>
                 <div class="after-message" id="afterMessage">Твой шар улетает...</div>
                 <button class="reset-btn" onclick="resetBalloonForm()">Отправить ещё один</button>
-                <button class="reset-btn" onclick="showSection('mainMenu')" style="margin-left: 8px;">Вернуться в меню</button>
+                <button class="reset-btn" onclick="showSection('mainMenu')" style="margin-left: 8px;">В меню</button>
             </div>
+        </div>
+
+        <!-- Галерея (локальная, без отправки в бот) -->
+        <div id="galleryContainer" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <h2>Галерея памяти</h2>
+            <div id="galleryContent"></div>
+        </div>
+
+        <!-- Истории (локальные) -->
+        <div id="storiesContainer" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <h2>Истории</h2>
+            <div id="storiesContent"></div>
+        </div>
+
+        <!-- Мои памятные даты (локальные) -->
+        <div id="memoriesContainer" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <h2>Мои памятные даты</h2>
+            <div id="memoriesContent"></div>
+        </div>
+
+        <!-- Форма добавления истории -->
+        <div id="addStoryForm" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <h1>Моя история</h1>
+            <div class="sub">поделись воспоминанием</div>
+            <textarea id="storyText" rows="4" placeholder="Напишите свою историю..."></textarea>
+            <button class="send-btn" onclick="addStory()">Отправить историю</button>
+            <div id="storyResult"></div>
         </div>
 
         <!-- Форма добавления даты -->
@@ -315,12 +348,7 @@
                 <input type="text" id="memoryDate" placeholder="2024-03-27">
             </div>
             <button class="send-btn" onclick="addMemoryDate()">Сохранить дату</button>
-        </div>
-
-        <!-- Контейнер для динамического контента (галерея, истории, даты) -->
-        <div id="dynamicContent" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
-            <div id="dynamicContentInner"></div>
+            <div id="dateResult"></div>
         </div>
     </div>
 
@@ -334,14 +362,71 @@
             tg.enableClosingConfirmation();
         }
 
-        function sendToBot(action, data, closeAfter = false) {
+        // ===== ЛОКАЛЬНЫЕ ХРАНИЛИЩА =====
+        let localBalloons = [];
+        let localStories = [];
+        let localMemories = [];
+
+        // Загрузка сохранённых данных из localStorage
+        function loadLocalData() {
+            const savedBalloons = localStorage.getItem('balloon_memory_balloons');
+            const savedStories = localStorage.getItem('balloon_memory_stories');
+            const savedMemories = localStorage.getItem('balloon_memory_memories');
+            
+            if (savedBalloons) localBalloons = JSON.parse(savedBalloons);
+            if (savedStories) localStories = JSON.parse(savedStories);
+            if (savedMemories) localMemories = JSON.parse(savedMemories);
+        }
+
+        // Сохранение данных в localStorage
+        function saveLocalData() {
+            localStorage.setItem('balloon_memory_balloons', JSON.stringify(localBalloons));
+            localStorage.setItem('balloon_memory_stories', JSON.stringify(localStories));
+            localStorage.setItem('balloon_memory_memories', JSON.stringify(localMemories));
+        }
+
+        function sendToBot(action, data, callback) {
             if (tg) {
+                // Отправляем в бота, но НЕ закрываем окно
                 tg.sendData(JSON.stringify({ action: action, ...data }));
-                if (closeAfter) {
-                    setTimeout(() => tg.close(), 500);
-                }
+                if (callback) callback({ success: true });
             } else {
-                alert('Функция доступна только в Telegram');
+                // Демо-режим: сохраняем локально
+                handleLocalAction(action, data, callback);
+            }
+        }
+
+        function handleLocalAction(action, data, callback) {
+            if (action === 'send_balloon') {
+                const newBalloon = {
+                    pet_name: data.pet_name,
+                    message: data.message,
+                    date: new Date().toISOString().slice(0, 10)
+                };
+                localBalloons.unshift(newBalloon);
+                if (localBalloons.length > 20) localBalloons.pop();
+                saveLocalData();
+                if (callback) callback({ success: true });
+            }
+            else if (action === 'add_story') {
+                const newStory = {
+                    story: data.story,
+                    date: new Date().toISOString().slice(0, 10)
+                };
+                localStories.unshift(newStory);
+                saveLocalData();
+                if (callback) callback({ success: true });
+            }
+            else if (action === 'add_memory_date') {
+                localMemories.push({
+                    pet_name: data.pet_name,
+                    date: data.date
+                });
+                saveLocalData();
+                if (callback) callback({ success: true });
+            }
+            else if (action === 'start_support') {
+                if (callback) callback({ success: true, message: `Поддержка для ${data.pet_name} началась` });
             }
         }
 
@@ -350,59 +435,62 @@
             document.getElementById(sectionId).classList.add('active');
         }
 
-        function showLoading() {
-            const inner = document.getElementById('dynamicContentInner');
-            inner.innerHTML = '<div class="loading">Загрузка...</div>';
-            showSection('dynamicContent');
-        }
-
-        function handleBotResponse(data) {
-            const inner = document.getElementById('dynamicContentInner');
+        // Отображение галереи (локально)
+        function showGallery() {
+            const container = document.getElementById('galleryContent');
             
-            if (data.action === 'gallery') {
-                if (!data.balloons || data.balloons.length === 0) {
-                    inner.innerHTML = '<div style="text-align:center">Пока нет ни одного шара. Станьте первым.</div>';
-                } else {
-                    let html = '<h2>Галерея памяти</h2>';
-                    for (let b of data.balloons) {
-                        html += `<div class="balloon-item">
-                            <strong>${escapeHtml(b.pet_name)}</strong> — ${escapeHtml(b.message)}
-                            <div class="balloon-date">${b.date}</div>
-                        </div>`;
-                    }
-                    inner.innerHTML = html;
+            if (localBalloons.length === 0) {
+                container.innerHTML = '<div style="text-align:center">Пока нет ни одного шара. Отправьте первый.</div>';
+            } else {
+                let html = '';
+                for (let b of localBalloons) {
+                    html += `<div class="balloon-item">
+                        <strong>${escapeHtml(b.pet_name)}</strong> — ${escapeHtml(b.message)}
+                        <div class="balloon-date">${b.date}</div>
+                    </div>`;
                 }
+                container.innerHTML = html;
             }
-            else if (data.action === 'stories') {
-                if (!data.stories || data.stories.length === 0) {
-                    inner.innerHTML = '<div style="text-align:center">Пока нет историй. Добавьте свою.</div>';
-                } else {
-                    let html = '<h2>Истории других людей</h2>';
-                    for (let s of data.stories) {
-                        html += `<div class="story-item">
-                            ${escapeHtml(s.story)}
-                            <div class="story-date">${s.date}</div>
-                        </div>`;
-                    }
-                    inner.innerHTML = html;
-                }
-            }
-            else if (data.action === 'memories') {
-                if (!data.memories || data.memories.length === 0) {
-                    inner.innerHTML = '<div style="text-align:center">У вас нет сохранённых дат. Добавьте дату в разделе "Добавить дату"</div>';
-                } else {
-                    let html = '<h2>Ваши памятные даты</h2>';
-                    for (let m of data.memories) {
-                        html += `<div class="balloon-item">
-                            <strong>${escapeHtml(m.pet_name)}</strong> — ${m.date}
-                        </div>`;
-                    }
-                    inner.innerHTML = html;
-                }
-            }
+            showSection('galleryContainer');
         }
 
-        // Отправка шара
+        // Отображение историй (локально)
+        function showStories() {
+            const container = document.getElementById('storiesContent');
+            
+            if (localStories.length === 0) {
+                container.innerHTML = '<div style="text-align:center">Пока нет историй. Добавьте свою.</div>';
+            } else {
+                let html = '';
+                for (let s of localStories) {
+                    html += `<div class="story-item">
+                        ${escapeHtml(s.story)}
+                        <div class="story-date">${s.date}</div>
+                    </div>`;
+                }
+                container.innerHTML = html;
+            }
+            showSection('storiesContainer');
+        }
+
+        // Отображение памятных дат (локально)
+        function showMemories() {
+            const container = document.getElementById('memoriesContent');
+            
+            if (localMemories.length === 0) {
+                container.innerHTML = '<div style="text-align:center">У вас нет сохранённых дат. Добавьте дату.</div>';
+            } else {
+                let html = '';
+                for (let m of localMemories) {
+                    html += `<div class="balloon-item">
+                        <strong>${escapeHtml(m.pet_name)}</strong> — ${m.date}
+                    </div>`;
+                }
+                container.innerHTML = html;
+            }
+            showSection('memoriesContainer');
+        }
+
         function sendBalloon() {
             const petName = document.getElementById('petName').value.trim();
             const message = document.getElementById('message').value.trim();
@@ -424,7 +512,10 @@
             document.getElementById('balloonBody').style.background = `radial-gradient(circle at 30% 30%, #fff, ${randomColor})`;
             document.getElementById('balloonText').innerHTML = `${escapeHtml(petName)}<br>${escapeHtml(message)}`;
             
-            sendToBot('send_balloon', { pet_name: petName, message: message }, false);
+            sendToBot('send_balloon', { pet_name: petName, message: message }, () => {
+                // Обновляем галерею в фоне
+                loadLocalData();
+            });
             
             setTimeout(() => {
                 document.getElementById('afterMessage').innerHTML = 'Ты не один. Твоя память осталась здесь';
@@ -439,25 +530,25 @@
             document.getElementById('afterMessage').innerHTML = 'Твой шар улетает...';
         }
         
-        // Галерея
-        function loadGallery() {
-            sendToBot('get_gallery', {});
-            showLoading();
+        function addStory() {
+            const story = document.getElementById('storyText').value.trim();
+            if (!story) {
+                alert('Напишите историю');
+                return;
+            }
+            
+            sendToBot('add_story', { story: story }, () => {
+                loadLocalData();
+                const resultDiv = document.getElementById('storyResult');
+                resultDiv.innerHTML = '<div class="success-message">История отправлена. Спасибо!</div>';
+                document.getElementById('storyText').value = '';
+                setTimeout(() => {
+                    resultDiv.innerHTML = '';
+                    showSection('mainMenu');
+                }, 2000);
+            });
         }
         
-        // Истории
-        function loadStories() {
-            sendToBot('get_stories', {});
-            showLoading();
-        }
-        
-        // Памятные даты
-        function loadMemories() {
-            sendToBot('get_memories', {});
-            showLoading();
-        }
-        
-        // Добавление даты
         function addMemoryDate() {
             const petName = document.getElementById('memoryPetName').value.trim();
             const date = document.getElementById('memoryDate').value.trim();
@@ -472,10 +563,26 @@
                 return;
             }
             
-            sendToBot('add_memory_date', { pet_name: petName, date: date }, true);
-            document.getElementById('memoryPetName').value = '';
-            document.getElementById('memoryDate').value = '';
-            alert('Дата сохранена. В этот день я пришлю напоминание.');
+            sendToBot('add_memory_date', { pet_name: petName, date: date }, () => {
+                loadLocalData();
+                const resultDiv = document.getElementById('dateResult');
+                resultDiv.innerHTML = '<div class="success-message">Дата сохранена. В этот день я пришлю напоминание.</div>';
+                document.getElementById('memoryPetName').value = '';
+                document.getElementById('memoryDate').value = '';
+                setTimeout(() => {
+                    resultDiv.innerHTML = '';
+                    showSection('mainMenu');
+                }, 2000);
+            });
+        }
+        
+        function startSupport() {
+            const petName = prompt('Напишите имя питомца, для которого хотите получить поддержку:');
+            if (petName && petName.trim()) {
+                sendToBot('start_support', { pet_name: petName.trim() }, () => {
+                    alert('Поддержка началась. Каждый день я буду присылать вам тёплые слова.');
+                });
+            }
             showSection('mainMenu');
         }
         
@@ -489,35 +596,15 @@
                 .replace(/'/g, '&#39;');
         }
         
-        // Обработка сообщений от бота
-        function handleBotMessage(messageText) {
-            if (messageText && messageText.startsWith('WEBAPP_RESPONSE:')) {
-                try {
-                    const jsonStr = messageText.replace('WEBAPP_RESPONSE:', '');
-                    const data = JSON.parse(jsonStr);
-                    if (data.type === 'bot_response') {
-                        handleBotResponse(data.payload);
-                    }
-                } catch(e) {
-                    console.log('Error parsing response:', e);
-                }
-            }
-        }
-        
         if (tg) {
             tg.onEvent('backButtonClicked', () => {
                 showSection('mainMenu');
             });
         }
         
-        const originalAlert = window.alert;
-        window.alert = function(msg) {
-            if (typeof msg === 'string' && msg.startsWith('WEBAPP_RESPONSE:')) {
-                handleBotMessage(msg);
-            } else {
-                originalAlert(msg);
-            }
-        };
+        // Инициализация
+        loadLocalData();
+        showSection('mainMenu');
     </script>
 </body>
 </html>
