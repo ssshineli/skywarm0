@@ -21,7 +21,8 @@
             overflow-x: hidden;
         }
 
-        .handdrawn-bg {
+        /* Рисованный фон — тёплые элементы */
+        .bg-drawn {
             position: fixed;
             top: 0;
             left: 0;
@@ -32,6 +33,89 @@
             overflow: hidden;
         }
 
+        /* Нарисованные звёзды */
+        .drawn-star {
+            position: absolute;
+            color: rgba(92, 75, 58, 0.2);
+            font-size: 24px;
+            font-weight: normal;
+            user-select: none;
+            animation: starTwinkle 3s infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            0% { opacity: 0.15; transform: scale(0.9); }
+            100% { opacity: 0.4; transform: scale(1.1); }
+        }
+
+        /* Нарисованные искры */
+        .drawn-spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #C4A27A;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: sparkGlow 2s infinite alternate;
+        }
+        .drawn-spark::before,
+        .drawn-spark::after {
+            content: '';
+            position: absolute;
+            background: #C4A27A;
+            border-radius: 50%;
+        }
+        .drawn-spark::before {
+            width: 8px;
+            height: 1px;
+            top: 1px;
+            left: -2px;
+        }
+        .drawn-spark::after {
+            width: 1px;
+            height: 8px;
+            top: -2px;
+            left: 1px;
+        }
+
+        @keyframes sparkGlow {
+            0% { opacity: 0.1; transform: scale(0.8); }
+            100% { opacity: 0.4; transform: scale(1.2); }
+        }
+
+        /* Нарисованные лапки (SVG) */
+        .drawn-paw {
+            position: absolute;
+            opacity: 0.12;
+            animation: floatPaw 6s infinite ease-in-out;
+        }
+
+        @keyframes floatPaw {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        /* Нарисованные завитки */
+        .drawn-curl {
+            position: absolute;
+            opacity: 0.1;
+            animation: slowDrift 12s infinite alternate;
+        }
+
+        @keyframes slowDrift {
+            0% { transform: translateX(0px) translateY(0px) rotate(0deg); }
+            100% { transform: translateX(8px) translateY(-5px) rotate(5deg); }
+        }
+
+        /* Акварельные пятна */
+        .watercolor-blob {
+            position: absolute;
+            background: radial-gradient(circle, rgba(92, 75, 58, 0.08) 0%, rgba(92, 75, 58, 0) 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+            pointer-events: none;
+        }
+
         .container {
             max-width: 550px;
             margin: 0 auto;
@@ -40,14 +124,14 @@
         }
 
         .card {
-            background: rgba(255, 248, 240, 0.88);
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 245, 0.85);
+            backdrop-filter: blur(8px);
             border-radius: 48px;
             padding: 24px 20px 32px;
             margin-bottom: 16px;
-            border: 1px solid rgba(196, 162, 122, 0.3);
-            position: relative;
+            border: 1px solid rgba(92, 75, 58, 0.15);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
 
         h1 {
@@ -81,8 +165,8 @@
         }
 
         .menu-btn {
-            background: rgba(196, 162, 122, 0.2);
-            border: 1px solid rgba(196, 162, 122, 0.4);
+            background: #FFF8F0;
+            border: 1px solid #E8D5B5;
             padding: 14px 12px;
             border-radius: 32px;
             font-size: 15px;
@@ -95,7 +179,7 @@
 
         .menu-btn:active {
             transform: scale(0.96);
-            background: rgba(196, 162, 122, 0.35);
+            background: #F5EDE0;
         }
 
         .input-group {
@@ -116,9 +200,9 @@
             width: 100%;
             padding: 14px 16px;
             font-size: 15px;
-            border: 1px solid #E8D5B5;
+            border: 1.5px solid #E8D5B5;
             border-radius: 32px;
-            background: rgba(255, 255, 255, 0.8);
+            background: #ffffff;
             color: #5C4B3A;
             outline: none;
             font-family: inherit;
@@ -126,7 +210,11 @@
 
         input:focus, textarea:focus {
             border-color: #C4A27A;
-            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(196, 162, 122, 0.2);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #B8A07E;
         }
 
         .toggle-group {
@@ -135,7 +223,7 @@
             align-items: center;
             margin: 16px 0;
             padding: 8px 12px;
-            background: rgba(196, 162, 122, 0.15);
+            background: #F5EDE0;
             border-radius: 40px;
         }
 
@@ -176,7 +264,7 @@
             width: 22px;
             left: 3px;
             bottom: 3px;
-            background-color: #C4A27A;
+            background-color: #FFF8F0;
             transition: 0.3s;
             border-radius: 50%;
         }
@@ -186,7 +274,6 @@
         }
 
         input:checked + .slider:before {
-            background-color: #ffffff;
             transform: translateX(24px);
         }
 
@@ -265,7 +352,7 @@
             margin-top: 30px;
             font-size: 14px;
             color: #5C4B3A;
-            background: rgba(255, 248, 240, 0.9);
+            background: #FFF8F0;
             padding: 12px 16px;
             border-radius: 32px;
         }
@@ -278,11 +365,11 @@
         }
 
         .action-btn {
-            background: rgba(196, 162, 122, 0.2);
-            border: 1px solid rgba(196, 162, 122, 0.4);
+            background: #FFF8F0;
+            border: 1px solid #E8D5B5;
             padding: 10px 20px;
             border-radius: 32px;
-            color: #5C4B3A;
+            color: #8B7355;
             cursor: pointer;
             font-size: 14px;
         }
@@ -302,7 +389,7 @@
             background: none;
             border: none;
             font-size: 24px;
-            color: #5C4B3A;
+            color: #8B7355;
             cursor: pointer;
             padding: 8px;
             line-height: 1;
@@ -349,7 +436,7 @@
             justify-content: center;
             text-align: center;
             padding: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             transition: all 0.2s;
         }
 
@@ -386,14 +473,14 @@
             text-align: center;
             padding: 60px 20px;
             color: #8B7355;
-            opacity: 0.7;
         }
 
         .story-item, .memory-item {
-            background: rgba(196, 162, 122, 0.15);
+            background: #FFF8F0;
             border-radius: 24px;
             padding: 12px;
             margin-bottom: 12px;
+            color: #5C4B3A;
         }
 
         footer {
@@ -406,122 +493,70 @@
     </style>
 </head>
 <body>
-    <div class="handdrawn-bg">
-        <!-- Рисованная звезда 1 -->
-        <svg style="position: absolute; top: 6%; left: 8%; width: 55px; height: 55px;" viewBox="0 0 70 70" fill="none">
-            <path d="M35 10 L40 27 L58 27 L44 38 L50 56 L35 45 L20 56 L26 38 L12 27 L30 27 Z" fill="#FCE6B4" fill-opacity="0.55" stroke="#D4B48C" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M35 18 L38 28 L48 28 L40 35 L43 45 L35 38 L27 45 L30 35 L22 28 L32 28 Z" fill="#FFE5B4" fill-opacity="0.65"/>
+    <!-- Рисованный фон (тёплые тона, без эмодзи) -->
+    <div class="bg-drawn">
+        <!-- Акварельные пятна -->
+        <div class="watercolor-blob" style="top: 5%; left: -5%; width: 300px; height: 300px;"></div>
+        <div class="watercolor-blob" style="bottom: 10%; right: -10%; width: 400px; height: 400px;"></div>
+        <div class="watercolor-blob" style="top: 40%; right: 20%; width: 200px; height: 200px;"></div>
+        
+        <!-- Нарисованные звёзды -->
+        <div class="drawn-star" style="top: 8%; left: 12%;">✦</div>
+        <div class="drawn-star" style="top: 18%; right: 15%;">✧</div>
+        <div class="drawn-star" style="top: 28%; left: 85%;">✦</div>
+        <div class="drawn-star" style="top: 42%; left: 5%;">✧</div>
+        <div class="drawn-star" style="top: 55%; right: 8%;">✦</div>
+        <div class="drawn-star" style="top: 68%; left: 20%;">✧</div>
+        <div class="drawn-star" style="top: 78%; right: 25%;">✦</div>
+        <div class="drawn-star" style="top: 88%; left: 45%;">✧</div>
+        
+        <!-- Нарисованные искры -->
+        <div class="drawn-spark" style="top: 12%; left: 35%;"></div>
+        <div class="drawn-spark" style="top: 22%; right: 45%;"></div>
+        <div class="drawn-spark" style="top: 35%; left: 60%;"></div>
+        <div class="drawn-spark" style="top: 48%; right: 70%;"></div>
+        <div class="drawn-spark" style="top: 60%; left: 80%;"></div>
+        <div class="drawn-spark" style="top: 72%; right: 30%;"></div>
+        <div class="drawn-spark" style="top: 82%; left: 25%;"></div>
+        
+        <!-- Нарисованные лапки (SVG) -->
+        <svg class="drawn-paw" style="top: 3%; right: 5%; width: 35px; height: 35px;" viewBox="0 0 24 24" fill="none" stroke="#C4A27A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
         </svg>
-
-        <!-- Рисованная звезда 2 -->
-        <svg style="position: absolute; bottom: 18%; right: 7%; width: 48px; height: 48px;" viewBox="0 0 70 70" fill="none">
-            <path d="M35 12 L40 28 L57 28 L44 39 L50 55 L35 46 L20 55 L26 39 L13 28 L30 28 Z" fill="#F5DEB3" fill-opacity="0.5" stroke="#C4A27A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M35 20 L38 30 L48 30 L40 37 L43 48 L35 41 L27 48 L30 37 L22 30 L32 30 Z" fill="#FCE6B4" fill-opacity="0.6"/>
+        <svg class="drawn-paw" style="bottom: 15%; left: 2%; width: 28px; height: 28px;" viewBox="0 0 24 24" fill="none" stroke="#C4A27A" stroke-width="1.5">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
         </svg>
-
-        <!-- Рисованная звезда 3 (маленькая) -->
-        <svg style="position: absolute; top: 42%; left: 85%; width: 38px; height: 38px;" viewBox="0 0 60 60" fill="none">
-            <path d="M30 8 L34 22 L49 22 L38 31 L43 47 L30 38 L17 47 L22 31 L11 22 L26 22 Z" fill="#FFE9C4" fill-opacity="0.6" stroke="#D4B48C" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="30" cy="27" r="4" fill="#FFD89C" fill-opacity="0.5"/>
+        <svg class="drawn-paw" style="top: 45%; right: 3%; width: 30px; height: 30px;" viewBox="0 0 24 24" fill="none" stroke="#C4A27A" stroke-width="1.5">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
         </svg>
-
-        <!-- Искра 1 (капля с завитком) -->
-        <svg style="position: absolute; top: 28%; right: 18%; width: 28px; height: 28px;" viewBox="0 0 35 35" fill="none">
-            <path d="M17 4 L20 12 L17 10 L14 12 L17 4Z" fill="#FFE5B4" fill-opacity="0.7"/>
-            <path d="M17 12 L18 20 L16 20 L17 12Z" fill="#F5D5A0" fill-opacity="0.6"/>
-            <path d="M17 20 L19 26 L15 26 L17 20Z" fill="#E8C99A" fill-opacity="0.5"/>
-            <circle cx="17" cy="8" r="2" fill="#FFF0C0" fill-opacity="0.8"/>
+        <svg class="drawn-paw" style="bottom: 30%; right: 12%; width: 25px; height: 25px;" viewBox="0 0 24 24" fill="none" stroke="#C4A27A" stroke-width="1.5">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
         </svg>
-
-        <!-- Искра 2 -->
-        <svg style="position: absolute; bottom: 45%; left: 12%; width: 24px; height: 24px;" viewBox="0 0 30 30" fill="none">
-            <path d="M15 5 L18 12 L15 10 L12 12 L15 5Z" fill="#FADB9F" fill-opacity="0.7"/>
-            <path d="M15 12 L16 18 L14 18 L15 12Z" fill="#F0CF92" fill-opacity="0.6"/>
-            <circle cx="15" cy="9" r="1.8" fill="#FFE5AD" fill-opacity="0.8"/>
+        
+        <!-- Нарисованные завитки -->
+        <svg class="drawn-curl" style="top: 20%; left: 2%; width: 40px; height: 40px;" viewBox="0 0 40 40" fill="none" stroke="#C4A27A" stroke-width="1.2">
+            <path d="M10 20 Q 20 5, 30 20 Q 35 30, 25 35 Q 15 38, 10 30 Q 5 22, 10 20Z" fill="none"/>
         </svg>
-
-        <!-- Искра 3 -->
-        <svg style="position: absolute; top: 68%; left: 28%; width: 22px; height: 22px;" viewBox="0 0 28 28" fill="none">
-            <path d="M14 4 L17 11 L14 9 L11 11 L14 4Z" fill="#FFE2A8" fill-opacity="0.7"/>
-            <path d="M14 11 L15 17 L13 17 L14 11Z" fill="#F2D196" fill-opacity="0.6"/>
+        <svg class="drawn-curl" style="bottom: 25%; right: 3%; width: 45px; height: 45px;" viewBox="0 0 40 40" fill="none" stroke="#C4A27A" stroke-width="1.2">
+            <path d="M30 15 Q 35 25, 30 35 Q 25 40, 15 35 Q 8 30, 12 20 Q 15 12, 25 10 Q 32 12, 30 15Z" fill="none"/>
         </svg>
-
-        <!-- Искра 4 -->
-        <svg style="position: absolute; top: 78%; right: 35%; width: 20px; height: 20px;" viewBox="0 0 25 25" fill="none">
-            <path d="M12 3 L15 10 L12 8 L9 10 L12 3Z" fill="#FFE2A0" fill-opacity="0.7"/>
-            <circle cx="12" cy="7" r="2" fill="#FFD98C" fill-opacity="0.7"/>
+        <svg class="drawn-curl" style="top: 65%; left: 5%; width: 35px; height: 35px;" viewBox="0 0 40 40" fill="none" stroke="#C4A27A" stroke-width="1.2">
+            <path d="M8 28 Q 15 20, 22 22 Q 28 24, 30 30 Q 32 36, 25 35 Q 18 34, 12 30 Q 8 26, 8 28Z" fill="none"/>
         </svg>
-
-        <!-- Завиток 1 (изящный) -->
-        <svg style="position: absolute; top: 18%; left: 32%; width: 55px; height: 55px;" viewBox="0 0 70 70" fill="none">
-            <path d="M25 38 C 30 28, 40 25, 48 30 C 55 35, 52 45, 45 48 C 38 51, 30 47, 28 40 C 26 35, 28 32, 25 38Z" fill="none" stroke="#D4B48C" stroke-width="1.5" stroke-opacity="0.55" stroke-linecap="round"/>
-            <circle cx="38" cy="38" r="3" fill="#F5DEB3" fill-opacity="0.45"/>
-        </svg>
-
-        <!-- Завиток 2 -->
-        <svg style="position: absolute; bottom: 32%; right: 25%; width: 48px; height: 48px;" viewBox="0 0 60 60" fill="none">
-            <path d="M40 22 C 48 26, 50 36, 44 42 C 38 48, 28 46, 24 38 C 20 32, 24 24, 32 22 C 38 20, 42 22, 40 22Z" fill="none" stroke="#C4A27A" stroke-width="1.3" stroke-opacity="0.55" stroke-linecap="round"/>
-            <circle cx="36" cy="32" r="2.5" fill="#E8C99A" fill-opacity="0.5"/>
-        </svg>
-
-        <!-- Завиток 3 -->
-        <svg style="position: absolute; top: 55%; left: 18%; width: 42px; height: 42px;" viewBox="0 0 55 55" fill="none">
-            <path d="M18 30 C 22 22, 32 20, 40 26 C 45 30, 42 38, 36 40 C 30 42, 24 38, 22 32 C 20 28, 22 26, 18 30Z" fill="none" stroke="#D4B48C" stroke-width="1.2" stroke-opacity="0.5" stroke-linecap="round"/>
-        </svg>
-
-        <!-- Рисованная лапка (мягкая) -->
-        <svg style="position: absolute; top: 48%; left: 75%; width: 42px; height: 42px;" viewBox="0 0 55 55" fill="none">
-            <path d="M18 32 C 20 28, 24 26, 28 28 C 30 30, 29 34, 26 36 C 23 38, 19 36, 18 32Z" fill="#F5DEB3" fill-opacity="0.5" stroke="#D4B48C" stroke-width="1"/>
-            <path d="M30 28 C 32 24, 36 23, 39 26 C 41 29, 39 33, 36 34 C 33 35, 30 33, 30 28Z" fill="#F5DEB3" fill-opacity="0.5" stroke="#D4B48C" stroke-width="1"/>
-            <path d="M42 32 C 44 28, 48 27, 51 30 C 53 33, 51 37, 48 38 C 45 39, 42 37, 42 32Z" fill="#F5DEB3" fill-opacity="0.5" stroke="#D4B48C" stroke-width="1"/>
-            <path d="M24 18 C 26 14, 30 13, 34 16 C 36 18, 35 22, 32 23 C 29 24, 25 22, 24 18Z" fill="#F5DEB3" fill-opacity="0.5" stroke="#D4B48C" stroke-width="1"/>
-            <path d="M36 18 C 38 14, 42 13, 46 16 C 48 18, 47 22, 44 23 C 41 24, 37 22, 36 18Z" fill="#F5DEB3" fill-opacity="0.5" stroke="#D4B48C" stroke-width="1"/>
-        </svg>
-
-        <!-- Лапка 2 -->
-        <svg style="position: absolute; bottom: 12%; left: 18%; width: 38px; height: 38px;" viewBox="0 0 50 50" fill="none">
-            <path d="M16 28 C 18 25, 21 24, 24 26 C 26 28, 25 31, 22 33 C 19 35, 16 33, 16 28Z" fill="#FCE6B4" fill-opacity="0.55" stroke="#C4A27A" stroke-width="0.9"/>
-            <path d="M26 25 C 28 22, 31 21, 34 24 C 36 26, 35 29, 32 30 C 29 31, 26 29, 26 25Z" fill="#FCE6B4" fill-opacity="0.55" stroke="#C4A27A" stroke-width="0.9"/>
-            <path d="M36 28 C 38 25, 41 24, 44 27 C 46 29, 45 32, 42 33 C 39 34, 36 32, 36 28Z" fill="#FCE6B4" fill-opacity="0.55" stroke="#C4A27A" stroke-width="0.9"/>
-            <path d="M21 16 C 23 13, 26 12, 29 15 C 31 17, 30 20, 27 21 C 24 22, 21 20, 21 16Z" fill="#FCE6B4" fill-opacity="0.55" stroke="#C4A27A" stroke-width="0.9"/>
-            <path d="M31 16 C 33 13, 36 12, 39 15 C 41 17, 40 20, 37 21 C 34 22, 31 20, 31 16Z" fill="#FCE6B4" fill-opacity="0.55" stroke="#C4A27A" stroke-width="0.9"/>
-        </svg>
-
-        <!-- Маленький завиток-спираль -->
-        <svg style="position: absolute; top: 82%; left: 48%; width: 28px; height: 28px;" viewBox="0 0 40 40" fill="none">
-            <path d="M20 12 C 24 8, 30 9, 32 14 C 34 19, 30 24, 25 25 C 20 26, 16 23, 18 18 C 19 15, 20 14, 20 12Z" fill="none" stroke="#D4B48C" stroke-width="1.2" stroke-opacity="0.5"/>
-        </svg>
-
-        <!-- Рисованное сердечко -->
-        <svg style="position: absolute; top: 34%; left: 55%; width: 30px; height: 30px;" viewBox="0 0 35 35" fill="none">
-            <path d="M17 27 L7 16 C4 13 5 8 9 6 C12 4 15 6 17 9 C19 6 22 4 25 6 C29 8 30 13 27 16 L17 27Z" fill="#F8C9A4" fill-opacity="0.5" stroke="#D4A27A" stroke-width="1"/>
-        </svg>
-
-        <!-- Облачко -->
-        <svg style="position: absolute; top: 72%; left: 52%; width: 70px; height: 45px;" viewBox="0 0 90 55" fill="none">
-            <ellipse cx="22" cy="28" rx="18" ry="14" fill="#FFF8F0" fill-opacity="0.5"/>
-            <ellipse cx="45" cy="22" rx="22" ry="17" fill="#FFF8F0" fill-opacity="0.5"/>
-            <ellipse cx="68" cy="28" rx="18" ry="14" fill="#FFF8F0" fill-opacity="0.5"/>
-        </svg>
-
-        <!-- Облачко 2 -->
-        <svg style="position: absolute; top: 14%; right: 28%; width: 65px; height: 42px;" viewBox="0 0 80 50" fill="none">
-            <ellipse cx="20" cy="25" rx="16" ry="12" fill="#FFF8F0" fill-opacity="0.5"/>
-            <ellipse cx="42" cy="20" rx="20" ry="15" fill="#FFF8F0" fill-opacity="0.5"/>
-            <ellipse cx="64" cy="25" rx="16" ry="12" fill="#FFF8F0" fill-opacity="0.5"/>
-        </svg>
-
-        <!-- Небольшая звезда-капля -->
-        <svg style="position: absolute; bottom: 55%; right: 42%; width: 22px; height: 22px;" viewBox="0 0 28 28" fill="none">
-            <path d="M14 4 L17 11 L14 9 L11 11 L14 4Z" fill="#FFE5B4" fill-opacity="0.7"/>
-            <path d="M14 11 L16 18 L12 18 L14 11Z" fill="#F2D196" fill-opacity="0.6"/>
+        
+        <!-- Дополнительные декоративные точки -->
+        <svg class="drawn-curl" style="top: 80%; right: 8%; width: 30px; height: 30px;" viewBox="0 0 30 30" fill="none" stroke="#C4A27A" stroke-width="1">
+            <circle cx="15" cy="15" r="8" fill="none"/>
+            <circle cx="15" cy="15" r="12" fill="none"/>
         </svg>
     </div>
 
     <div class="container">
+        <!-- Главное меню -->
         <div id="mainMenu" class="card section active">
             <h1>Небо памяти</h1>
             <div class="sub">лети высоко, друг</div>
+            
             <div class="menu-grid">
                 <button class="menu-btn" onclick="showSection('balloonForm')">Отправить шар</button>
                 <button class="menu-btn" onclick="showGallery()">Небо шаров</button>
@@ -533,19 +568,22 @@
             <footer>каждый шар — воспоминание, которое остаётся в небе</footer>
         </div>
 
+        <!-- Форма отправки шара -->
         <div id="balloonForm" class="card section">
             <button class="back-corner" onclick="showSection('mainMenu')">←</button>
             <h1>Отправить шар</h1>
             <div class="sub">напиши имя и слово</div>
+            
             <div id="balloonInputForm">
                 <div class="input-group">
                     <label>Имя питомца</label>
-                    <input type="text" id="petName" maxlength="30">
+                    <input type="text" id="petName" maxlength="30" placeholder="например, Барсик">
                 </div>
                 <div class="input-group">
                     <label>Слово или фраза</label>
-                    <input type="text" id="message" maxlength="50">
+                    <input type="text" id="message" maxlength="50" placeholder="спасибо, помню, люблю">
                 </div>
+                
                 <div class="toggle-group">
                     <span class="toggle-label">Анонимно</span>
                     <label class="switch">
@@ -554,8 +592,10 @@
                     </label>
                     <span class="toggle-label">С именем</span>
                 </div>
+                
                 <button class="send-btn" onclick="sendBalloon()">Отпустить шар в небо</button>
             </div>
+            
             <div id="balloonAnimation" class="animation-area" style="display:none">
                 <div class="balloon-animation" id="balloonAnim">
                     <div class="balloon-body-animation" id="balloonBodyAnim">
@@ -571,6 +611,7 @@
             </div>
         </div>
 
+        <!-- Галерея-небо -->
         <div id="galleryContainer" class="card section">
             <button class="back-corner" onclick="showSection('mainMenu')">←</button>
             <h2>Небо памяти</h2>
@@ -578,12 +619,14 @@
             <div id="galleryContent" class="sky-gallery"></div>
         </div>
 
+        <!-- Истории -->
         <div id="storiesContainer" class="card section">
             <button class="back-corner" onclick="showSection('mainMenu')">←</button>
             <h2>Истории</h2>
             <div id="storiesContent"></div>
         </div>
 
+        <!-- Мои памятные даты -->
         <div id="memoriesContainer" class="card section">
             <button class="back-corner" onclick="showSection('mainMenu')">←</button>
             <h2>Мои памятные даты</h2>
