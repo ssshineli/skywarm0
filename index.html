@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Шар памяти</title>
+    <title>Шар памяти — небо воспоминаний</title>
     <style>
         * {
             margin: 0;
@@ -13,70 +13,174 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #F8DB98;
+            background: linear-gradient(180deg, #1a2a4f 0%, #2a3f6e 50%, #3a4f7e 100%);
             min-height: 100vh;
             padding: 16px;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Рисованный фон — без эмодзи, только CSS и SVG-элементы */
+        .bg-drawn {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Нарисованные звёзды */
+        .drawn-star {
+            position: absolute;
+            color: rgba(255, 230, 180, 0.35);
+            font-size: 24px;
+            font-weight: normal;
+            user-select: none;
+            animation: starTwinkle 3s infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            0% { opacity: 0.2; transform: scale(0.9); }
+            100% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        /* Нарисованные искры (точки с лучиками) */
+        .drawn-spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFE5B4;
+            border-radius: 50%;
+            opacity: 0.35;
+            animation: sparkGlow 2s infinite alternate;
+        }
+        .drawn-spark::before,
+        .drawn-spark::after {
+            content: '';
+            position: absolute;
+            background: #FFE5B4;
+            border-radius: 50%;
+        }
+        .drawn-spark::before {
+            width: 8px;
+            height: 1px;
+            top: 1px;
+            left: -2px;
+        }
+        .drawn-spark::after {
+            width: 1px;
+            height: 8px;
+            top: -2px;
+            left: 1px;
+        }
+
+        @keyframes sparkGlow {
+            0% { opacity: 0.1; transform: scale(0.8); }
+            100% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Нарисованные лапки (SVG) */
+        .drawn-paw {
+            position: absolute;
+            opacity: 0.12;
+            animation: floatPaw 6s infinite ease-in-out;
+        }
+
+        @keyframes floatPaw {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        /* Нарисованные завитки/закорючки */
+        .drawn-curl {
+            position: absolute;
+            opacity: 0.1;
+            animation: slowDrift 12s infinite alternate;
+        }
+
+        @keyframes slowDrift {
+            0% { transform: translateX(0px) translateY(0px) rotate(0deg); }
+            100% { transform: translateX(8px) translateY(-5px) rotate(5deg); }
+        }
+
+        /* Акварельные пятна (для мягкости) */
+        .watercolor-blob {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,230,180,0.08) 0%, rgba(255,230,180,0) 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+            pointer-events: none;
         }
 
         .container {
-            max-width: 500px;
+            max-width: 550px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
             border-radius: 48px;
             padding: 24px 20px 32px;
             margin-bottom: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
         }
 
         h1 {
             font-size: 28px;
             font-weight: 600;
-            color: #5C4B3A;
+            color: #FFE5B4;
             margin-bottom: 4px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         h2 {
             font-size: 20px;
             font-weight: 600;
-            color: #5C4B3A;
+            color: #FFE5B4;
             margin-bottom: 16px;
+            text-align: center;
         }
 
         .sub {
-            color: #8B7355;
+            color: #C4B5A0;
             font-size: 14px;
             margin-bottom: 24px;
-            border-bottom: 1px solid #E8D5B5;
-            display: inline-block;
-            padding-bottom: 6px;
+            text-align: center;
         }
 
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .menu-btn {
-            background: #FFF8F0;
-            border: 1px solid #E8D5B5;
-            padding: 12px;
+            background: rgba(255, 248, 240, 0.2);
+            border: 1px solid rgba(255, 248, 240, 0.3);
+            padding: 14px 12px;
             border-radius: 32px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 500;
-            color: #5C4B3A;
+            color: #FFE5B4;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
+            backdrop-filter: blur(4px);
         }
 
         .menu-btn:active {
             transform: scale(0.96);
-            background: #F5EDE0;
+            background: rgba(255, 248, 240, 0.3);
         }
 
         .input-group {
@@ -88,7 +192,7 @@
             display: block;
             font-size: 14px;
             font-weight: 500;
-            color: #5C4B3A;
+            color: #FFE5B4;
             margin-bottom: 6px;
             margin-left: 8px;
         }
@@ -97,17 +201,81 @@
             width: 100%;
             padding: 14px 16px;
             font-size: 15px;
-            border: 1.5px solid #E8D5B5;
+            border: 1px solid rgba(255, 248, 240, 0.3);
             border-radius: 32px;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
             outline: none;
             font-family: inherit;
-            resize: none;
         }
 
         input:focus, textarea:focus {
-            border-color: #C4A27A;
-            box-shadow: 0 0 0 3px rgba(196, 162, 122, 0.2);
+            border-color: #FFE5B4;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 248, 240, 0.5);
+        }
+
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 16px 0;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 40px;
+        }
+
+        .toggle-label {
+            color: #FFE5B4;
+            font-size: 14px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #C4A27A;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
         }
 
         .send-btn {
@@ -135,7 +303,7 @@
             min-height: 380px;
         }
 
-        .balloon {
+        .balloon-animation {
             position: relative;
             width: 160px;
             height: 180px;
@@ -143,25 +311,27 @@
             animation: floatUp 4.5s ease-out forwards;
         }
 
-        .balloon-body {
+        .balloon-body-animation {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #fff, #D4B48C);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            flex-direction: column;
         }
 
-        .balloon-text {
+        .balloon-text-animation {
             color: white;
             font-weight: 700;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            font-size: 16px;
-            padding: 12px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            padding: 8px;
             word-break: break-word;
+            text-align: center;
         }
 
         .string {
@@ -170,7 +340,7 @@
             left: 50%;
             width: 2px;
             height: 40px;
-            background: #8B7355;
+            background: #C4A27A;
             transform: translateX(-50%);
         }
 
@@ -182,20 +352,27 @@
         .after-message {
             margin-top: 30px;
             font-size: 14px;
-            color: #5C4B3A;
-            background: #FFF8F0;
+            color: #FFE5B4;
+            background: rgba(0, 0, 0, 0.3);
             padding: 12px 16px;
             border-radius: 32px;
         }
 
-        .reset-btn {
-            background: #FFF8F0;
-            border: 1px solid #E8D5B5;
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .action-btn {
+            background: rgba(255, 248, 240, 0.2);
+            border: 1px solid rgba(255, 248, 240, 0.3);
             padding: 10px 20px;
             border-radius: 32px;
-            margin-top: 16px;
-            color: #8B7355;
+            color: #FFE5B4;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .section {
@@ -206,297 +383,414 @@
             display: block;
         }
 
-        .back-btn {
+        .back-corner {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             background: none;
             border: none;
-            color: #8B7355;
-            font-size: 14px;
-            padding: 8px 0;
-            margin-bottom: 16px;
+            font-size: 24px;
+            color: #FFE5B4;
             cursor: pointer;
+            padding: 8px;
+            line-height: 1;
+            z-index: 2;
+        }
+
+        .card {
+            position: relative;
+        }
+
+        .sky-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            min-height: 400px;
+            padding: 20px 0;
+        }
+
+        .sky-balloon {
+            position: relative;
+            width: 140px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .sky-balloon:hover {
+            transform: scale(1.05);
+        }
+
+        .balloon-body {
+            width: 100%;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+        }
+
+        .balloon-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            word-break: break-word;
+        }
+
+        .balloon-message {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 4px;
+            word-break: break-word;
+        }
+
+        .balloon-author {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .balloon-string {
+            width: 2px;
+            height: 30px;
+            background: #C4A27A;
+            margin: 0 auto;
+        }
+
+        .empty-sky {
+            text-align: center;
+            padding: 60px 20px;
+            color: #FFE5B4;
+            opacity: 0.7;
+        }
+
+        .story-item, .memory-item {
+            background: rgba(255, 248, 240, 0.15);
+            border-radius: 24px;
+            padding: 12px;
+            margin-bottom: 12px;
         }
 
         footer {
             text-align: center;
             font-size: 11px;
-            color: #B8A07E;
+            color: rgba(255, 248, 240, 0.6);
             padding: 16px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #8B7355;
-        }
-
-        .success-message {
-            background: #E8F5E8;
-            color: #5C7C5C;
-            padding: 12px;
-            border-radius: 24px;
-            margin-top: 16px;
-            text-align: center;
-        }
-
-        .balloon-item, .story-item {
-            background: #FFF8F0;
-            padding: 12px;
-            border-radius: 24px;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .balloon-date, .story-date {
-            font-size: 11px;
-            color: #B8A07E;
-            margin-top: 6px;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
+    <!-- Рисованный фон (без эмодзи, только CSS и SVG-подобные элементы) -->
+    <div class="bg-drawn">
+        <!-- Акварельные пятна -->
+        <div class="watercolor-blob" style="top: 5%; left: -5%; width: 300px; height: 300px;"></div>
+        <div class="watercolor-blob" style="bottom: 10%; right: -10%; width: 400px; height: 400px;"></div>
+        <div class="watercolor-blob" style="top: 40%; right: 20%; width: 200px; height: 200px;"></div>
+        
+        <!-- Нарисованные звёзды (символы, но стилизованные под рисованные) -->
+        <div class="drawn-star" style="top: 8%; left: 12%;">✦</div>
+        <div class="drawn-star" style="top: 18%; right: 15%;">✧</div>
+        <div class="drawn-star" style="top: 28%; left: 85%;">✦</div>
+        <div class="drawn-star" style="top: 42%; left: 5%;">✧</div>
+        <div class="drawn-star" style="top: 55%; right: 8%;">✦</div>
+        <div class="drawn-star" style="top: 68%; left: 20%;">✧</div>
+        <div class="drawn-star" style="top: 78%; right: 25%;">✦</div>
+        <div class="drawn-star" style="top: 88%; left: 45%;">✧</div>
+        
+        <!-- Нарисованные искры (светящиеся точки с лучиками) -->
+        <div class="drawn-spark" style="top: 12%; left: 35%;"></div>
+        <div class="drawn-spark" style="top: 22%; right: 45%;"></div>
+        <div class="drawn-spark" style="top: 35%; left: 60%;"></div>
+        <div class="drawn-spark" style="top: 48%; right: 70%;"></div>
+        <div class="drawn-spark" style="top: 60%; left: 80%;"></div>
+        <div class="drawn-spark" style="top: 72%; right: 30%;"></div>
+        <div class="drawn-spark" style="top: 82%; left: 25%;"></div>
+        
+        <!-- Нарисованные лапки (SVG через HTML-элементы) -->
+        <svg class="drawn-paw" style="top: 3%; right: 5%; width: 35px; height: 35px;" viewBox="0 0 24 24" fill="none" stroke="#FFE5B4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
+        </svg>
+        <svg class="drawn-paw" style="bottom: 15%; left: 2%; width: 28px; height: 28px;" viewBox="0 0 24 24" fill="none" stroke="#FFE5B4" stroke-width="1.5">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
+        </svg>
+        <svg class="drawn-paw" style="top: 45%; right: 3%; width: 30px; height: 30px;" viewBox="0 0 24 24" fill="none" stroke="#FFE5B4" stroke-width="1.5">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
+        </svg>
+        <svg class="drawn-paw" style="bottom: 30%; right: 12%; width: 25px; height: 25px;" viewBox="0 0 24 24" fill="none" stroke="#FFE5B4" stroke-width="1.5">
+            <path d="M6 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM12 8c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM6 18c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3zM18 12c0-2 2-3 3-3s3 1 3 3-2 3-3 3-3-1-3-3z"/>
+        </svg>
+        
+        <!-- Нарисованные завитки -->
+        <svg class="drawn-curl" style="top: 20%; left: 2%; width: 40px; height: 40px;" viewBox="0 0 40 40" fill="none" stroke="#FFE5B4" stroke-width="1.2">
+            <path d="M10 20 Q 20 5, 30 20 Q 35 30, 25 35 Q 15 38, 10 30 Q 5 22, 10 20Z" fill="none"/>
+        </svg>
+        <svg class="drawn-curl" style="bottom: 25%; right: 3%; width: 45px; height: 45px;" viewBox="0 0 40 40" fill="none" stroke="#FFE5B4" stroke-width="1.2">
+            <path d="M30 15 Q 35 25, 30 35 Q 25 40, 15 35 Q 8 30, 12 20 Q 15 12, 25 10 Q 32 12, 30 15Z" fill="none"/>
+        </svg>
+        <svg class="drawn-curl" style="top: 65%; left: 5%; width: 35px; height: 35px;" viewBox="0 0 40 40" fill="none" stroke="#FFE5B4" stroke-width="1.2">
+            <path d="M8 28 Q 15 20, 22 22 Q 28 24, 30 30 Q 32 36, 25 35 Q 18 34, 12 30 Q 8 26, 8 28Z" fill="none"/>
+        </svg>
+        
+        <!-- Дополнительные декоративные точки и линии -->
+        <svg class="drawn-curl" style="top: 80%; right: 8%; width: 30px; height: 30px;" viewBox="0 0 30 30" fill="none" stroke="#FFE5B4" stroke-width="1">
+            <circle cx="15" cy="15" r="8" fill="none"/>
+            <circle cx="15" cy="15" r="12" fill="none"/>
+        </svg>
+    </div>
+
     <div class="container">
         <!-- Главное меню -->
         <div id="mainMenu" class="card section active">
-            <h1>Шар памяти</h1>
+            <h1>Небо памяти</h1>
             <div class="sub">лети высоко, друг</div>
             
             <div class="menu-grid">
                 <button class="menu-btn" onclick="showSection('balloonForm')">Отправить шар</button>
-                <button class="menu-btn" onclick="showGallery()">Галерея</button>
-                <button class="menu-btn" onclick="showSection('addStoryForm')">Добавить историю</button>
-                <button class="menu-btn" onclick="showSection('storiesContainer')">Истории</button>
-                <button class="menu-btn" onclick="showSection('addDateForm')">Добавить дату</button>
-                <button class="menu-btn" onclick="showSection('memoriesContainer')">Мои даты</button>
-                <button class="menu-btn" onclick="startSupport()">Поддержка 40 дней</button>
+                <button class="menu-btn" onclick="showGallery()">Небо шаров</button>
+                <button class="menu-btn" onclick="showStories()">Истории</button>
+                <button class="menu-btn" onclick="showMemories()">Мои даты</button>
+                <button class="menu-btn" onclick="addStoryFromPrompt()">Добавить историю</button>
+                <button class="menu-btn" onclick="addMemoryFromPrompt()">Добавить дату</button>
             </div>
-            <footer>память остаётся с тобой навсегда</footer>
+            <footer>каждый шар — воспоминание, которое остаётся в небе</footer>
         </div>
 
         <!-- Форма отправки шара -->
         <div id="balloonForm" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <button class="back-corner" onclick="showSection('mainMenu')">←</button>
             <h1>Отправить шар</h1>
-            <div class="sub">напиши имя и одно слово</div>
+            <div class="sub">напиши имя и слово</div>
             
             <div id="balloonInputForm">
                 <div class="input-group">
                     <label>Имя питомца</label>
-                    <input type="text" id="petName" maxlength="30">
+                    <input type="text" id="petName" maxlength="30" placeholder="например, Барсик">
                 </div>
                 <div class="input-group">
                     <label>Слово или фраза</label>
-                    <input type="text" id="message" maxlength="50">
+                    <input type="text" id="message" maxlength="50" placeholder="спасибо, помню, люблю">
                 </div>
-                <button class="send-btn" onclick="sendBalloon()">Отпустить шар</button>
+                
+                <div class="toggle-group">
+                    <span class="toggle-label">Анонимно</span>
+                    <label class="switch">
+                        <input type="checkbox" id="anonymousToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">С именем</span>
+                </div>
+                
+                <button class="send-btn" onclick="sendBalloon()">Отпустить шар в небо</button>
             </div>
             
             <div id="balloonAnimation" class="animation-area" style="display:none">
-                <div class="balloon" id="balloon">
-                    <div class="balloon-body" id="balloonBody">
-                        <div class="balloon-text" id="balloonText"></div>
+                <div class="balloon-animation" id="balloonAnim">
+                    <div class="balloon-body-animation" id="balloonBodyAnim">
+                        <div class="balloon-text-animation" id="balloonTextAnim"></div>
                     </div>
                     <div class="string"></div>
                 </div>
-                <div class="after-message" id="afterMessage">Твой шар улетает...</div>
-                <button class="reset-btn" onclick="resetBalloonForm()">Отправить ещё один</button>
-                <button class="reset-btn" onclick="showSection('mainMenu')" style="margin-left: 8px;">В меню</button>
+                <div class="after-message" id="afterMessage">Твой шар улетает в небо...</div>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="resetBalloonForm()">Отправить ещё один</button>
+                    <button class="action-btn" onclick="showSection('mainMenu')">В меню</button>
+                </div>
             </div>
         </div>
 
-        <!-- Галерея (локальная, без отправки в бот) -->
+        <!-- Галерея-небо -->
         <div id="galleryContainer" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
-            <h2>Галерея памяти</h2>
-            <div id="galleryContent"></div>
+            <button class="back-corner" onclick="showSection('mainMenu')">←</button>
+            <h2>Небо памяти</h2>
+            <div class="sub">шары, которые улетели в небо</div>
+            <div id="galleryContent" class="sky-gallery"></div>
         </div>
 
-        <!-- Истории (локальные) -->
+        <!-- Истории -->
         <div id="storiesContainer" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <button class="back-corner" onclick="showSection('mainMenu')">←</button>
             <h2>Истории</h2>
             <div id="storiesContent"></div>
         </div>
 
-        <!-- Мои памятные даты (локальные) -->
+        <!-- Мои памятные даты -->
         <div id="memoriesContainer" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <button class="back-corner" onclick="showSection('mainMenu')">←</button>
             <h2>Мои памятные даты</h2>
             <div id="memoriesContent"></div>
-        </div>
-
-        <!-- Форма добавления истории -->
-        <div id="addStoryForm" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
-            <h1>Моя история</h1>
-            <div class="sub">поделись воспоминанием</div>
-            <textarea id="storyText" rows="4" placeholder="Напишите свою историю..."></textarea>
-            <button class="send-btn" onclick="addStory()">Отправить историю</button>
-            <div id="storyResult"></div>
-        </div>
-
-        <!-- Форма добавления даты -->
-        <div id="addDateForm" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
-            <h1>Памятная дата</h1>
-            <div class="sub">сохрани день памяти</div>
-            <div class="input-group">
-                <label>Имя питомца</label>
-                <input type="text" id="memoryPetName" maxlength="30">
-            </div>
-            <div class="input-group">
-                <label>Дата (ГГГГ-ММ-ДД)</label>
-                <input type="text" id="memoryDate" placeholder="2024-03-27">
-            </div>
-            <button class="send-btn" onclick="addMemoryDate()">Сохранить дату</button>
-            <div id="dateResult"></div>
         </div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const colors = ['#E8D5B5', '#D4B48C', '#C4A27A', '#B28C60', '#A57C5C', '#C4D4B5', '#B8C8A8'];
+        const colors = ['#E8D5B5', '#D4B48C', '#C4A27A', '#B28C60', '#F4A261', '#E9C46A', '#76B5C5', '#9C89B8', '#F08080', '#A7C7B0'];
         
         const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.expand();
-            tg.enableClosingConfirmation();
-        }
-
-        // ===== ЛОКАЛЬНЫЕ ХРАНИЛИЩА =====
-        let localBalloons = [];
-        let localStories = [];
-        let localMemories = [];
-
-        // Загрузка сохранённых данных из localStorage
-        function loadLocalData() {
-            const savedBalloons = localStorage.getItem('balloon_memory_balloons');
-            const savedStories = localStorage.getItem('balloon_memory_stories');
-            const savedMemories = localStorage.getItem('balloon_memory_memories');
-            
-            if (savedBalloons) localBalloons = JSON.parse(savedBalloons);
-            if (savedStories) localStories = JSON.parse(savedStories);
-            if (savedMemories) localMemories = JSON.parse(savedMemories);
-        }
-
-        // Сохранение данных в localStorage
-        function saveLocalData() {
-            localStorage.setItem('balloon_memory_balloons', JSON.stringify(localBalloons));
-            localStorage.setItem('balloon_memory_stories', JSON.stringify(localStories));
-            localStorage.setItem('balloon_memory_memories', JSON.stringify(localMemories));
-        }
-
-        function sendToBot(action, data, callback) {
-            if (tg) {
-                // Отправляем в бота, но НЕ закрываем окно
-                tg.sendData(JSON.stringify({ action: action, ...data }));
-                if (callback) callback({ success: true });
-            } else {
-                // Демо-режим: сохраняем локально
-                handleLocalAction(action, data, callback);
+        let currentUsername = null;
+        
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            currentUsername = tg.initDataUnsafe.user.first_name;
+            if (tg.initDataUnsafe.user.last_name) {
+                currentUsername += ' ' + tg.initDataUnsafe.user.last_name;
             }
+        } else {
+            currentUsername = 'Друг';
         }
-
-        function handleLocalAction(action, data, callback) {
-            if (action === 'send_balloon') {
-                const newBalloon = {
-                    pet_name: data.pet_name,
-                    message: data.message,
-                    date: new Date().toISOString().slice(0, 10)
-                };
-                localBalloons.unshift(newBalloon);
-                if (localBalloons.length > 20) localBalloons.pop();
-                saveLocalData();
-                if (callback) callback({ success: true });
-            }
-            else if (action === 'add_story') {
-                const newStory = {
-                    story: data.story,
-                    date: new Date().toISOString().slice(0, 10)
-                };
-                localStories.unshift(newStory);
-                saveLocalData();
-                if (callback) callback({ success: true });
-            }
-            else if (action === 'add_memory_date') {
-                localMemories.push({
-                    pet_name: data.pet_name,
-                    date: data.date
-                });
-                saveLocalData();
-                if (callback) callback({ success: true });
-            }
-            else if (action === 'start_support') {
-                if (callback) callback({ success: true, message: `Поддержка для ${data.pet_name} началась` });
-            }
+        
+        const STORAGE_KEYS = {
+            BALLOONS: 'balloon_sky_balloons',
+            STORIES: 'balloon_sky_stories',
+            MEMORIES: 'balloon_sky_memories'
+        };
+        
+        function loadBalloons() {
+            const saved = localStorage.getItem(STORAGE_KEYS.BALLOONS);
+            return saved ? JSON.parse(saved) : [];
         }
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
+        
+        function loadStories() {
+            const saved = localStorage.getItem(STORAGE_KEYS.STORIES);
+            return saved ? JSON.parse(saved) : [];
         }
-
-        // Отображение галереи (локально)
+        
+        function loadMemories() {
+            const saved = localStorage.getItem(STORAGE_KEYS.MEMORIES);
+            return saved ? JSON.parse(saved) : [];
+        }
+        
+        function saveBalloons(balloons) {
+            localStorage.setItem(STORAGE_KEYS.BALLOONS, JSON.stringify(balloons));
+        }
+        
+        function saveStories(stories) {
+            localStorage.setItem(STORAGE_KEYS.STORIES, JSON.stringify(stories));
+        }
+        
+        function saveMemories(memories) {
+            localStorage.setItem(STORAGE_KEYS.MEMORIES, JSON.stringify(memories));
+        }
+        
+        function addBalloon(petName, message, isAnonymous) {
+            const balloons = loadBalloons();
+            const newBalloon = {
+                id: Date.now(),
+                pet_name: petName,
+                message: message,
+                author: isAnonymous ? null : currentUsername,
+                date: new Date().toLocaleDateString('ru-RU'),
+                timestamp: Date.now(),
+                color: colors[Math.floor(Math.random() * colors.length)]
+            };
+            balloons.unshift(newBalloon);
+            const limitedBalloons = balloons.slice(0, 30);
+            saveBalloons(limitedBalloons);
+            return limitedBalloons;
+        }
+        
+        function addStory(storyText) {
+            const stories = loadStories();
+            const newStory = {
+                story: storyText,
+                date: new Date().toLocaleDateString('ru-RU'),
+                timestamp: Date.now()
+            };
+            stories.unshift(newStory);
+            saveStories(stories.slice(0, 50));
+        }
+        
+        function addMemory(petName, date) {
+            const memories = loadMemories();
+            const newMemory = {
+                pet_name: petName,
+                date: date,
+                timestamp: Date.now()
+            };
+            memories.push(newMemory);
+            saveMemories(memories);
+        }
+        
         function showGallery() {
             const container = document.getElementById('galleryContent');
+            const balloons = loadBalloons();
+            const sortedBalloons = [...balloons].sort((a, b) => b.timestamp - a.timestamp);
+            const last10Balloons = sortedBalloons.slice(0, 10);
             
-            if (localBalloons.length === 0) {
-                container.innerHTML = '<div style="text-align:center">Пока нет ни одного шара. Отправьте первый.</div>';
+            if (last10Balloons.length === 0) {
+                container.innerHTML = '<div class="empty-sky">Небо пока пусто. Отправьте первый шар</div>';
             } else {
                 let html = '';
-                for (let b of localBalloons) {
-                    html += `<div class="balloon-item">
-                        <strong>${escapeHtml(b.pet_name)}</strong> — ${escapeHtml(b.message)}
-                        <div class="balloon-date">${b.date}</div>
-                    </div>`;
+                for (let b of last10Balloons) {
+                    const authorText = b.author ? `— ${escapeHtml(b.author)}` : 'анонимно';
+                    html += `
+                        <div class="sky-balloon">
+                            <div class="balloon-body" style="background: radial-gradient(circle at 30% 30%, #fff, ${b.color});">
+                                <div class="balloon-name">${escapeHtml(b.pet_name)}</div>
+                                <div class="balloon-message">${escapeHtml(b.message)}</div>
+                                <div class="balloon-author">${authorText}</div>
+                            </div>
+                            <div class="balloon-string"></div>
+                            <div style="font-size: 9px; text-align: center; margin-top: 4px; color: rgba(255,248,240,0.5);">${b.date}</div>
+                        </div>
+                    `;
                 }
                 container.innerHTML = html;
             }
             showSection('galleryContainer');
         }
-
-        // Отображение историй (локально)
+        
         function showStories() {
             const container = document.getElementById('storiesContent');
+            const stories = loadStories();
             
-            if (localStories.length === 0) {
-                container.innerHTML = '<div style="text-align:center">Пока нет историй. Добавьте свою.</div>';
+            if (stories.length === 0) {
+                container.innerHTML = '<div class="empty-sky">Пока нет историй. Добавьте свою.</div>';
             } else {
                 let html = '';
-                for (let s of localStories) {
-                    html += `<div class="story-item">
-                        ${escapeHtml(s.story)}
-                        <div class="story-date">${s.date}</div>
-                    </div>`;
+                for (let s of stories.slice(0, 20)) {
+                    html += `<div class="story-item">${escapeHtml(s.story)}<div style="font-size: 10px; color: #C4B5A0; margin-top: 6px;">${s.date}</div></div>`;
                 }
                 container.innerHTML = html;
             }
             showSection('storiesContainer');
         }
-
-        // Отображение памятных дат (локально)
+        
         function showMemories() {
             const container = document.getElementById('memoriesContent');
+            const memories = loadMemories();
             
-            if (localMemories.length === 0) {
-                container.innerHTML = '<div style="text-align:center">У вас нет сохранённых дат. Добавьте дату.</div>';
+            if (memories.length === 0) {
+                container.innerHTML = '<div class="empty-sky">У вас нет сохранённых дат. Добавьте дату.</div>';
             } else {
                 let html = '';
-                for (let m of localMemories) {
-                    html += `<div class="balloon-item">
-                        <strong>${escapeHtml(m.pet_name)}</strong> — ${m.date}
-                    </div>`;
+                for (let m of memories) {
+                    html += `<div class="memory-item"><strong>${escapeHtml(m.pet_name)}</strong> — ${m.date}</div>`;
                 }
                 container.innerHTML = html;
             }
             showSection('memoriesContainer');
         }
-
+        
         function sendBalloon() {
             const petName = document.getElementById('petName').value.trim();
             const message = document.getElementById('message').value.trim();
+            const isAnonymous = document.getElementById('anonymousToggle').checked;
             
             if (!petName || !message) {
-                alert('Напиши имя и одно слово');
+                alert('Напиши имя питомца и слово');
                 return;
             }
             
@@ -505,20 +799,27 @@
                 return;
             }
             
+            addBalloon(petName, message, isAnonymous);
+            
+            if (tg) {
+                tg.sendData(JSON.stringify({ 
+                    action: 'send_balloon', 
+                    pet_name: petName, 
+                    message: message,
+                    is_anonymous: isAnonymous,
+                    author: isAnonymous ? null : currentUsername
+                }));
+            }
+            
             document.getElementById('balloonInputForm').style.display = 'none';
             document.getElementById('balloonAnimation').style.display = 'block';
             
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            document.getElementById('balloonBody').style.background = `radial-gradient(circle at 30% 30%, #fff, ${randomColor})`;
-            document.getElementById('balloonText').innerHTML = `${escapeHtml(petName)}<br>${escapeHtml(message)}`;
-            
-            sendToBot('send_balloon', { pet_name: petName, message: message }, () => {
-                // Обновляем галерею в фоне
-                loadLocalData();
-            });
+            document.getElementById('balloonBodyAnim').style.background = `radial-gradient(circle at 30% 30%, #fff, ${randomColor})`;
+            document.getElementById('balloonTextAnim').innerHTML = `${escapeHtml(petName)}<br>${escapeHtml(message)}`;
             
             setTimeout(() => {
-                document.getElementById('afterMessage').innerHTML = 'Ты не один. Твоя память осталась здесь';
+                document.getElementById('afterMessage').innerHTML = 'Твой шар теперь в небе. Ты не один.';
             }, 4000);
         }
         
@@ -527,63 +828,41 @@
             document.getElementById('balloonAnimation').style.display = 'none';
             document.getElementById('petName').value = '';
             document.getElementById('message').value = '';
-            document.getElementById('afterMessage').innerHTML = 'Твой шар улетает...';
+            document.getElementById('anonymousToggle').checked = false;
+            document.getElementById('afterMessage').innerHTML = 'Твой шар улетает в небо...';
         }
         
-        function addStory() {
-            const story = document.getElementById('storyText').value.trim();
-            if (!story) {
-                alert('Напишите историю');
-                return;
+        function addStoryFromPrompt() {
+            const story = prompt('Напишите свою историю:');
+            if (story && story.trim()) {
+                addStory(story.trim());
+                if (tg) {
+                    tg.sendData(JSON.stringify({ action: 'add_story', story: story.trim() }));
+                }
+                alert('История сохранена. Спасибо!');
             }
-            
-            sendToBot('add_story', { story: story }, () => {
-                loadLocalData();
-                const resultDiv = document.getElementById('storyResult');
-                resultDiv.innerHTML = '<div class="success-message">История отправлена. Спасибо!</div>';
-                document.getElementById('storyText').value = '';
-                setTimeout(() => {
-                    resultDiv.innerHTML = '';
-                    showSection('mainMenu');
-                }, 2000);
-            });
         }
         
-        function addMemoryDate() {
-            const petName = document.getElementById('memoryPetName').value.trim();
-            const date = document.getElementById('memoryDate').value.trim();
-            
-            if (!petName || !date) {
-                alert('Заполните оба поля');
+        function addMemoryFromPrompt() {
+            const petName = prompt('Напишите имя питомца:');
+            if (!petName || !petName.trim()) return;
+            const date = prompt('Напишите дату в формате ГГГГ-ММ-ДД (например, 2024-03-27):');
+            if (!date || !date.trim()) return;
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(date.trim())) {
+                alert('Неверный формат даты. Используйте ГГГГ-ММ-ДД');
                 return;
             }
-            
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-                alert('Используйте формат ГГГГ-ММ-ДД, например 2024-03-27');
-                return;
+            addMemory(petName.trim(), date.trim());
+            if (tg) {
+                tg.sendData(JSON.stringify({ action: 'add_memory_date', pet_name: petName.trim(), date: date.trim() }));
             }
-            
-            sendToBot('add_memory_date', { pet_name: petName, date: date }, () => {
-                loadLocalData();
-                const resultDiv = document.getElementById('dateResult');
-                resultDiv.innerHTML = '<div class="success-message">Дата сохранена. В этот день я пришлю напоминание.</div>';
-                document.getElementById('memoryPetName').value = '';
-                document.getElementById('memoryDate').value = '';
-                setTimeout(() => {
-                    resultDiv.innerHTML = '';
-                    showSection('mainMenu');
-                }, 2000);
-            });
+            alert('Дата сохранена. В этот день я пришлю напоминание.');
         }
         
-        function startSupport() {
-            const petName = prompt('Напишите имя питомца, для которого хотите получить поддержку:');
-            if (petName && petName.trim()) {
-                sendToBot('start_support', { pet_name: petName.trim() }, () => {
-                    alert('Поддержка началась. Каждый день я буду присылать вам тёплые слова.');
-                });
-            }
-            showSection('mainMenu');
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
         }
         
         function escapeHtml(str) {
@@ -597,13 +876,13 @@
         }
         
         if (tg) {
+            tg.expand();
+            tg.enableClosingConfirmation();
             tg.onEvent('backButtonClicked', () => {
                 showSection('mainMenu');
             });
         }
         
-        // Инициализация
-        loadLocalData();
         showSection('mainMenu');
     </script>
 </body>
