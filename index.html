@@ -229,6 +229,20 @@
             color: #8B7355;
         }
 
+        .story-item, .balloon-item {
+            background: #FFF8F0;
+            padding: 12px;
+            border-radius: 24px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .story-date, .balloon-date {
+            font-size: 11px;
+            color: #B8A07E;
+            margin-top: 6px;
+        }
+
         .success-message {
             background: #E8F5E8;
             color: #5C7C5C;
@@ -248,9 +262,10 @@
             
             <div class="menu-grid">
                 <button class="menu-btn" onclick="showSection('balloonForm')">Отправить шар</button>
-                <button class="menu-btn" onclick="showSection('addStoryForm')">Добавить историю</button>
+                <button class="menu-btn" onclick="loadGallery()">Галерея</button>
+                <button class="menu-btn" onclick="loadStories()">Истории</button>
+                <button class="menu-btn" onclick="loadMemories()">Памятные даты</button>
                 <button class="menu-btn" onclick="showSection('addDateForm')">Добавить дату</button>
-                <button class="menu-btn" onclick="startSupport()">Поддержка 40 дней</button>
             </div>
             <footer>память остаётся с тобой навсегда</footer>
         </div>
@@ -282,16 +297,8 @@
                 </div>
                 <div class="after-message" id="afterMessage">Твой шар улетает...</div>
                 <button class="reset-btn" onclick="resetBalloonForm()">Отправить ещё один</button>
+                <button class="reset-btn" onclick="showSection('mainMenu')" style="margin-left: 8px;">Вернуться в меню</button>
             </div>
-        </div>
-
-        <!-- Форма добавления истории -->
-        <div id="addStoryForm" class="card section">
-            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
-            <h1>Моя история</h1>
-            <div class="sub">поделись воспоминанием</div>
-            <textarea id="storyText" rows="4" placeholder="Напишите свою историю..."></textarea>
-            <button class="send-btn" onclick="addStory()">Отправить историю</button>
         </div>
 
         <!-- Форма добавления даты -->
@@ -309,6 +316,12 @@
             </div>
             <button class="send-btn" onclick="addMemoryDate()">Сохранить дату</button>
         </div>
+
+        <!-- Контейнер для динамического контента (галерея, истории, даты) -->
+        <div id="dynamicContent" class="card section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Назад</button>
+            <div id="dynamicContentInner"></div>
+        </div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -321,10 +334,12 @@
             tg.enableClosingConfirmation();
         }
 
-        function sendToBot(action, data) {
+        function sendToBot(action, data, closeAfter = false) {
             if (tg) {
                 tg.sendData(JSON.stringify({ action: action, ...data }));
-                tg.close(); // Закрываем WebApp после отправки
+                if (closeAfter) {
+                    setTimeout(() => tg.close(), 500);
+                }
             } else {
                 alert('Функция доступна только в Telegram');
             }
@@ -335,6 +350,59 @@
             document.getElementById(sectionId).classList.add('active');
         }
 
+        function showLoading() {
+            const inner = document.getElementById('dynamicContentInner');
+            inner.innerHTML = '<div class="loading">Загрузка...</div>';
+            showSection('dynamicContent');
+        }
+
+        function handleBotResponse(data) {
+            const inner = document.getElementById('dynamicContentInner');
+            
+            if (data.action === 'gallery') {
+                if (!data.balloons || data.balloons.length === 0) {
+                    inner.innerHTML = '<div style="text-align:center">Пока нет ни одного шара. Станьте первым.</div>';
+                } else {
+                    let html = '<h2>Галерея памяти</h2>';
+                    for (let b of data.balloons) {
+                        html += `<div class="balloon-item">
+                            <strong>${escapeHtml(b.pet_name)}</strong> — ${escapeHtml(b.message)}
+                            <div class="balloon-date">${b.date}</div>
+                        </div>`;
+                    }
+                    inner.innerHTML = html;
+                }
+            }
+            else if (data.action === 'stories') {
+                if (!data.stories || data.stories.length === 0) {
+                    inner.innerHTML = '<div style="text-align:center">Пока нет историй. Добавьте свою.</div>';
+                } else {
+                    let html = '<h2>Истории других людей</h2>';
+                    for (let s of data.stories) {
+                        html += `<div class="story-item">
+                            ${escapeHtml(s.story)}
+                            <div class="story-date">${s.date}</div>
+                        </div>`;
+                    }
+                    inner.innerHTML = html;
+                }
+            }
+            else if (data.action === 'memories') {
+                if (!data.memories || data.memories.length === 0) {
+                    inner.innerHTML = '<div style="text-align:center">У вас нет сохранённых дат. Добавьте дату в разделе "Добавить дату"</div>';
+                } else {
+                    let html = '<h2>Ваши памятные даты</h2>';
+                    for (let m of data.memories) {
+                        html += `<div class="balloon-item">
+                            <strong>${escapeHtml(m.pet_name)}</strong> — ${m.date}
+                        </div>`;
+                    }
+                    inner.innerHTML = html;
+                }
+            }
+        }
+
+        // Отправка шара
         function sendBalloon() {
             const petName = document.getElementById('petName').value.trim();
             const message = document.getElementById('message').value.trim();
@@ -356,7 +424,7 @@
             document.getElementById('balloonBody').style.background = `radial-gradient(circle at 30% 30%, #fff, ${randomColor})`;
             document.getElementById('balloonText').innerHTML = `${escapeHtml(petName)}<br>${escapeHtml(message)}`;
             
-            sendToBot('send_balloon', { pet_name: petName, message: message });
+            sendToBot('send_balloon', { pet_name: petName, message: message }, false);
             
             setTimeout(() => {
                 document.getElementById('afterMessage').innerHTML = 'Ты не один. Твоя память осталась здесь';
@@ -371,18 +439,25 @@
             document.getElementById('afterMessage').innerHTML = 'Твой шар улетает...';
         }
         
-        function addStory() {
-            const story = document.getElementById('storyText').value.trim();
-            if (!story) {
-                alert('Напишите историю');
-                return;
-            }
-            sendToBot('add_story', { story: story });
-            document.getElementById('storyText').value = '';
-            alert('История отправлена. Спасибо!');
-            showSection('mainMenu');
+        // Галерея
+        function loadGallery() {
+            sendToBot('get_gallery', {});
+            showLoading();
         }
         
+        // Истории
+        function loadStories() {
+            sendToBot('get_stories', {});
+            showLoading();
+        }
+        
+        // Памятные даты
+        function loadMemories() {
+            sendToBot('get_memories', {});
+            showLoading();
+        }
+        
+        // Добавление даты
         function addMemoryDate() {
             const petName = document.getElementById('memoryPetName').value.trim();
             const date = document.getElementById('memoryDate').value.trim();
@@ -397,19 +472,10 @@
                 return;
             }
             
-            sendToBot('add_memory_date', { pet_name: petName, date: date });
+            sendToBot('add_memory_date', { pet_name: petName, date: date }, true);
             document.getElementById('memoryPetName').value = '';
             document.getElementById('memoryDate').value = '';
             alert('Дата сохранена. В этот день я пришлю напоминание.');
-            showSection('mainMenu');
-        }
-        
-        function startSupport() {
-            const petName = prompt('Напишите имя питомца, для которого хотите получить поддержку:');
-            if (petName && petName.trim()) {
-                sendToBot('start_support', { pet_name: petName.trim() });
-                alert('Поддержка началась. Каждый день я буду присылать вам тёплые слова.');
-            }
             showSection('mainMenu');
         }
         
@@ -423,11 +489,35 @@
                 .replace(/'/g, '&#39;');
         }
         
+        // Обработка сообщений от бота
+        function handleBotMessage(messageText) {
+            if (messageText && messageText.startsWith('WEBAPP_RESPONSE:')) {
+                try {
+                    const jsonStr = messageText.replace('WEBAPP_RESPONSE:', '');
+                    const data = JSON.parse(jsonStr);
+                    if (data.type === 'bot_response') {
+                        handleBotResponse(data.payload);
+                    }
+                } catch(e) {
+                    console.log('Error parsing response:', e);
+                }
+            }
+        }
+        
         if (tg) {
             tg.onEvent('backButtonClicked', () => {
                 showSection('mainMenu');
             });
         }
+        
+        const originalAlert = window.alert;
+        window.alert = function(msg) {
+            if (typeof msg === 'string' && msg.startsWith('WEBAPP_RESPONSE:')) {
+                handleBotMessage(msg);
+            } else {
+                originalAlert(msg);
+            }
+        };
     </script>
 </body>
 </html>
